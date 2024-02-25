@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('service:server');
 var http = require('http');
 
+// 数据库
+require('../config/db.config')
+
 /**
  * Get port from environment and store in Express.
  */
