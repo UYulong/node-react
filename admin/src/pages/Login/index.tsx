@@ -96,32 +96,29 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async (values: API.LoginParams) => {
+    console.log(values);
+
     try {
       // 登录
-      const msg = await login({ ...values, type });
+      const msg = await login({ ...values });
+
       if (msg.status === 'ok') {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
-        message.success(defaultLoginSuccessMessage);
+        message.success('登录成功！');
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
       }
+
       console.log(msg);
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
     } catch (error) {
-      const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
       console.log(error);
-      message.error(defaultLoginFailureMessage);
+      message.error('登录失败，请重试！');
     }
   };
+
   const { status, type: loginType } = userLoginState;
 
   return (
@@ -171,18 +168,15 @@ const Login: React.FC = () => {
               {
                 key: 'mobile',
                 label: '手机号登录',
+                disabled: true,
               },
             ]}
           />
 
           {status === 'error' && loginType === 'account' && (
-            <LoginMessage
-              content={intl.formatMessage({
-                id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/ant.design)',
-              })}
-            />
+            <LoginMessage content="账户或密码错误" />
           )}
+
           {type === 'account' && (
             <>
               <ProFormText
@@ -195,15 +189,11 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
+                    message: '请输入用户名!',
                   },
                 ]}
               />
+
               <ProFormText.Password
                 name="password"
                 fieldProps={{
@@ -214,12 +204,7 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
+                    message: '请输入密码！',
                   },
                 ]}
               />
@@ -308,6 +293,7 @@ const Login: React.FC = () => {
               />
             </>
           )}
+
           <div
             style={{
               marginBottom: 24,
