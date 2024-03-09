@@ -11,3 +11,13 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
     ...(options || {}),
   });
 }
+
+/** 获取用户信息接口 POST /admin-api/queryUserInfo */
+export async function queryUserInfo() {
+  return request<API.QueryUserInfo>('/admin-api/queryUserInfo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}

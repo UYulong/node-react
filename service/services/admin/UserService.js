@@ -6,6 +6,10 @@ const UserService = {
       username,
       password
     })
+  },
+
+  queryUserInfo: ({ username, _id }) => {
+    return UserModel.find({ username, _id })
   }
 }
 

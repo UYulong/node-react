@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 const UserRoute = require('./routes/admin/UserRoute');
+const JWT = require('./utils/JWT');
 
 var app = express();
 
@@ -18,6 +19,40 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 权限认证
+app.use((req, res, next) => {
+  if (req.url.includes('login')) {
+    next()
+    return
+  }
+
+  const token = req.headers.authorization?.split(' ')[1]
+  if (token) {
+    console.log('token', token);
+
+    if (token === 'null') {
+      res.status(401).send({ code: -1, msg: 'token 已过期，请重新登录' })
+      return
+    }
+
+    const verifyResult = JWT.verify(token)
+    if (verifyResult) {
+      const newToken = JWT.generate({
+        username: verifyResult.username,
+        _id: verifyResult._id
+      }, '1d')
+
+
+      res.header('authorization', newToken)
+      next()
+    } else {
+      res.status(401).send({ code: -1, msg: 'token 已过期，请重新登录' })
+    }
+  } else {
+    res.status(401).send({ code: -1, msg: 'token 已过期，请重新登录' })
+  }
+})
 
 app.use('/', indexRouter);
 app.use(UserRoute) // 用户相关

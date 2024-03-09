@@ -96,11 +96,11 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async (values: API.LoginParams) => {
-    console.log(values);
-
     try {
       // 登录
       const msg = await login({ ...values });
+
+      console.log(msg);
 
       if (msg.status === 'ok') {
         message.success('登录成功！');
@@ -110,7 +110,6 @@ const Login: React.FC = () => {
         return;
       }
 
-      console.log(msg);
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
     } catch (error) {
@@ -151,6 +150,8 @@ const Login: React.FC = () => {
           subTitle="Node + React18 后台管理系统"
           initialValues={{
             autoLogin: true,
+            username: 'admin',
+            password: '123456',
           }}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);

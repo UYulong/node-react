@@ -23,10 +23,26 @@ declare namespace API {
     phone?: string;
   };
 
+  type QueryUserInfo = {
+    success: boolean;
+    data: CurrentUser
+  }
+
   type LoginResult = {
     status?: string;
     type?: string;
     currentAuthority?: string;
+    _id?: string;
+    token: string
+  };
+
+  type QueryUserInfo = {
+    status?: string;
+    success?: boolean;
+    data: {
+      username: string;
+      gender: number
+    }
   };
 
   type PageParams = {
