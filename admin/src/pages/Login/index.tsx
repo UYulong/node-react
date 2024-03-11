@@ -8,13 +8,12 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
+import { history, useModel, Helmet } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
 import Settings from '../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createStyles } from 'antd-style';
-
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -50,17 +49,10 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-
 const Lang = () => {
   const { styles } = useStyles();
-
-  return (
-    <div className={styles.lang} data-lang>
-      {SelectLang && <SelectLang />}
-    </div>
-  );
+  return;
 };
-
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -75,14 +67,11 @@ const LoginMessage: React.FC<{
     />
   );
 };
-
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
-  const intl = useIntl();
-
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
@@ -94,14 +83,13 @@ const Login: React.FC = () => {
       });
     }
   };
-
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
-      const msg = await login({ ...values });
-
+      const msg = await login({
+        ...values,
+      });
       console.log(msg);
-
       if (msg.status === 'ok') {
         message.success('登录成功！');
         await fetchUserInfo();
@@ -117,18 +105,12 @@ const Login: React.FC = () => {
       message.error('登录失败，请重试！');
     }
   };
-
   const { status, type: loginType } = userLoginState;
-
   return (
     <div className={styles.container}>
       <Helmet>
         <title>
-          {intl.formatMessage({
-            id: 'menu.login',
-            defaultMessage: '登录页',
-          })}
-          - {Settings.title}
+          {'登录'}- {Settings.title}
         </title>
       </Helmet>
 
@@ -146,7 +128,7 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="CMS管理系统"
+          title="管理系统"
           subTitle="Node + React18 后台管理系统"
           initialValues={{
             autoLogin: true,
@@ -221,28 +203,15 @@ const Login: React.FC = () => {
                   prefix: <MobileOutlined />,
                 }}
                 name="mobile"
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.phoneNumber.placeholder',
-                  defaultMessage: '手机号',
-                })}
+                placeholder={'请输入手机号！'}
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.required"
-                        defaultMessage="请输入手机号！"
-                      />
-                    ),
+                    message: '手机号是必填项！',
                   },
                   {
                     pattern: /^1\d{10}$/,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.invalid"
-                        defaultMessage="手机号格式错误！"
-                      />
-                    ),
+                    message: '不合法的手机号！',
                   },
                 ]}
               />
@@ -254,32 +223,18 @@ const Login: React.FC = () => {
                 captchaProps={{
                   size: 'large',
                 }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.captcha.placeholder',
-                  defaultMessage: '请输入验证码',
-                })}
+                placeholder={'请输入验证码！'}
                 captchaTextRender={(timing, count) => {
                   if (timing) {
-                    return `${count} ${intl.formatMessage({
-                      id: 'pages.getCaptchaSecondText',
-                      defaultMessage: '获取验证码',
-                    })}`;
+                    return `${count} ${'秒后重新获取'}`;
                   }
-                  return intl.formatMessage({
-                    id: 'pages.login.phoneLogin.getVerificationCode',
-                    defaultMessage: '获取验证码',
-                  });
+                  return '获取验证码';
                 }}
                 name="captcha"
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.captcha.required"
-                        defaultMessage="请输入验证码！"
-                      />
-                    ),
+                    message: '验证码是必填项！',
                   },
                 ]}
                 onGetCaptcha={async (phone) => {
@@ -301,14 +256,14 @@ const Login: React.FC = () => {
             }}
           >
             <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
+              自动登录
             </ProFormCheckbox>
             <a
               style={{
                 float: 'right',
               }}
             >
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
+              忘记密码 ?
             </a>
           </div>
         </LoginForm>
@@ -318,5 +273,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
 export default Login;
